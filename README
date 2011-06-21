@@ -1,0 +1,13 @@
+//fluidsim
+//
+//
+//
+//Author: Gregori Kanatzidis
+//Date: 6/20/11
+//
+
+Here we are. Modifications made to an existing NumAnal tool for Navier-Stokes.
+
+Graphs the visual data.
+
+TODO: switch to more precice numerical methods.
