@@ -12,26 +12,32 @@ class Point {
 		~Point() {}
 };
 
-void split(std::string input, std::string first, std::string second, Point *p);
+bool split(std::string input, std::string first, std::string second, Point *p);
 bool getnewp(Point *p);
 
-std::ifstream data("circle.dat");
+std::ifstream data("icecube.prt");
 char buffer[20];
 int i;
+bool timeslice;
 
 int main() {
 	i=0;
+	timeslice=false;
 	Point p,oldp;
-	CImg<unsigned char> blank(100, 100, 1, 3, 0), visu(1100, 205, 1, 3, 0);
+	CImg<unsigned char> blank(100, 100, 1, 3, 0), visu(500, 500, 1, 3, 0);
 	const unsigned char red[] = {255,0,0}, green[] = {0,255,0}, blue[] = {0,0,255};
 	CImgDisplay main_disp(blank, "click to stop"), draw_disp(visu, "Fluid Vis");
 	visu.fill(0);
 	while(!draw_disp.is_closed()) {
+		if(!timeslice){
 		if(!main_disp.button()) {
 		oldp.X = p.X; oldp.Y = p.Y;
 		bool test=getnewp(&p);
 		if(test) {
-			visu.draw_line(oldp.X, oldp.Y, p.X, p.Y, green).display(draw_disp);
+			visu(p.X, 500-p.Y, 0, 0)=255;
+			visu(p.X, 500-p.Y, 0, 1)=0;
+			visu(p.X, 500-p.Y, 0, 2)=0;
+			visu.display(draw_disp);
 		}
 		if(data.eof()) {
 			std::cout<<"End of File"<<std::endl;
@@ -42,8 +48,18 @@ int main() {
 			std::cout<<i<<std::endl;
 			return 0;
 		}
+	}else{
+		std::cout<<"advance to next timestep? [y/n] ";
+		std::string y;
+		std::cin>>y;
+		if(!strcmp(y.c_str(),"y")){
+			visu.fill(0);
+			timeslice=false;
+		}else{
+			return 0;
+		}
 	}
-
+	}
 	return 0;
 }
 
@@ -56,8 +72,7 @@ bool getnewp(Point *p) {
 	}
 	if(!data.eof()) {
 		data.getline(buffer, 19);
-		if(!(strcmp(buffer, "338")==0)) {
-			split(buffer, x ,y, p);
+		if(split(buffer, x, y, p)) {
 				return true;
 			
 		}else {
@@ -73,10 +88,15 @@ bool getnewp(Point *p) {
 		}
 }
 
-void split(std::string input, std::string first, std::string second, Point *p) {
+bool split(std::string input, std::string first, std::string second, Point *p) {
 	std::string::size_type pos;
 	pos=input.find(' ',0);
+	if(pos==-1){
+		timeslice=true;
+		return false;
+	}
 	second=input.substr(pos+1);
 	first=input.substr(0,pos);
 	p->X=(int)(50*(atof(first.c_str()))+.5); p->Y=(int)(50*(atof(second.c_str()))+.5);	
+	return true;
 }
