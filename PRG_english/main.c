@@ -117,10 +117,12 @@ int main(int argc, char *Inputfile[])
    /* Compute right hand side for pressure equation */
    /*-----------------------------------------------*/
    COMP_RHS(F,G,RHS,FLAG,imax,jmax,delt,delx,dely);
+	for(i=0;i<=imax+1;i++)
+		P[i][jmax+1] = 6.;
 
 
    /* Debug Code */
-
+/*
    printf ("\nGeometry of the fluid domain:\n\n");
    	for(j=jmax+1;j>=0;j--)
 	{
@@ -129,9 +131,7 @@ int main(int argc, char *Inputfile[])
 		printf("\n");
 	}
 	printf("\n\n");
-	scanf("%d", &a);
-	for(i=0;i<=imax+1;i++)
-		P[i][jmax+1] = 6.;
+	scanf("%d", &a);*/
    /* End Debug */
 
    /* Solve the pressure equation by successive over relaxation */
