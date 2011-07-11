@@ -28,6 +28,7 @@ int main(int argc, char *Inputfile[])
   char infile[30],outfile[30];
   struct particleline *Particlelines;
   int init_case, cycle;
+  int a,j,i;
 
   /* READ the parameters of the problem.                */
   /* Stop if problem type or inputfile are not defined  */       
@@ -116,6 +117,22 @@ int main(int argc, char *Inputfile[])
    /* Compute right hand side for pressure equation */
    /*-----------------------------------------------*/
    COMP_RHS(F,G,RHS,FLAG,imax,jmax,delt,delx,dely);
+
+
+   /* Debug Code */
+
+   printf ("\nGeometry of the fluid domain:\n\n");
+   	for(j=jmax+1;j>=0;j--)
+	{
+		for(i=0;i<=imax+1;i++)
+			printf("%d ", (int) P[i][j]);
+		printf("\n");
+	}
+	printf("\n\n");
+	scanf("%d", &a);
+	for(i=0;i<=imax+1;i++)
+		P[i][jmax+1] = 6.;
+   /* End Debug */
 
    /* Solve the pressure equation by successive over relaxation */
    /*-----------------------------------------------------------*/

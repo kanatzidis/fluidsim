@@ -20,7 +20,7 @@ struct particleline *INIT_PARTICLES (int *N,int imax,int jmax,
 
                        /* Initialization of some parameters */
                        /*-----------------------------------*/
- if(strcmp(problem, "dam")==0 || strcmp(problem,"icecube")==0)
+ if(strcmp(problem, "dam")==0 || strcmp(problem, "icecube")==0)
     *N = 1;
  if(strcmp(problem, "drop")==0)
    {
@@ -55,9 +55,12 @@ struct particleline *INIT_PARTICLES (int *N,int imax,int jmax,
           for (jp=1;jp<=ppc;jp++)
 	    {
              y = (j-1)*dely+(jp-.5)/((REAL)ppc)*dely;
-   			 if(strcmp(problem,"icecube")==0)
+   			 if(strcmp(problem,"icecube")==0){
 				if(sqrt((x-(imax*delx)/2)*(x-(imax*delx)/2)+y*y)>=(imax*delx)/4)
-				   SET_PART(&Particlelines[1],x,y);	
+				   SET_PART(&Particlelines[1],x,y);
+//		 		else
+//			   	   SET_PART(&Particlelines[2],x,y);
+			 }		
              if(strcmp(problem, "dam")==0)
                 if (x<0.2*imax*delx)
                    SET_PART(&Particlelines[1],x,y);

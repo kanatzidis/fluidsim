@@ -210,8 +210,8 @@ void INIT_UVP(char *problem,
               REAL **U,REAL **V,REAL **P,REAL **TEMP,int imax,int jmax,
               REAL UI,REAL VI,REAL TI)
 {
-  int i,j;
-  REAL center,rad1,x,y;
+  int i,j,a;
+  double center,rad1,x,y;
  /* loop through all cells */
  /*------------------------*/
   for(i=0;i<=imax+1;i++)
@@ -223,18 +223,31 @@ void INIT_UVP(char *problem,
   {
 	  				/*icecube experimental setup */
 	  				/*imploded PMT */
-	center = 10/2;
-	rad1 = center/2;
-			x = (i-0.5)*(10/imax);
-			y = (j-0.5)*(10/imax);
-			if (sqrt((x-center)*(x-center)+y*y)<=rad1)
-				P[i][j] = 0;
+	center = 5.;
+	rad1 = 2.5;
+			x = i*.2;
+			y = j*.2;
+			if(((x-center)*(x-center)+y*y)<=(rad1*rad1)){
+				P[i][j] = 0.;
+			}
   else 
 	P[i][j] = 6.;
   }else{
 	  P[i][j]=0;}
 	TEMP[i][j] = TI;
       }
+
+	printf("\nGeometryetc:\n\n");
+	for(j=jmax+1;j>=0;j--)
+	{
+		for(i=0;i<=imax+1;i++)
+			printf("%d ", (int) P[i][j]);
+		printf("\n");
+	}
+	printf("\n\n");
+	scanf("%d", &a);
+
+
   /* Set U=0.0 in the lower half for the flow past a backward facing step */
   /*----------------------------------------------------------------------*/
   if(strcmp(problem, "backstep")==0)

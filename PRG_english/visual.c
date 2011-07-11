@@ -408,10 +408,12 @@ void WRITE_PARTICLES(char *partfile, int N, struct particleline *Partlines){
   int i;
   FILE *fp;
   struct particle *part;
-
   fp = fopen(partfile,"a");
 
   for(i=1; i<=N; i++){
+	fprintf(fp,"%s","Partlines[");
+	fprintf(fp,"%d",i);
+	fprintf(fp,"%s","]");
     fprintf(fp,"%d\n",Partlines[i].length);
     for(part=Partlines[i].Particles; part->next != NULL; part=part->next)
       fprintf(fp,"%3.3f %3.3f\n", part->next->x, part->next->y);
