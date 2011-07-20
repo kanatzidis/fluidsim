@@ -28,7 +28,7 @@ int main(int argc, char *Inputfile[])
   char infile[30],outfile[30];
   struct particleline *Particlelines;
   int init_case, cycle;
-  int a,j,i;
+  int a,j,i,pass;
 
   /* READ the parameters of the problem.                */
   /* Stop if problem type or inputfile are not defined  */       
@@ -77,9 +77,9 @@ int main(int argc, char *Inputfile[])
 
   /* Initialize particles for free boundary problems */      
   /*-------------------------------------------------*/
-  if (!strcmp(problem,"drop") || !strcmp(problem,"dam") ||
-		  !strcmp(problem,"icecube"))
-     Particlelines = INIT_PARTICLES(&N,imax,jmax,delx,dely,ppc,problem,U,V);
+  if (!strcmp(problem,"drop") || !strcmp(problem,"dam")/* ||
+		  !strcmp(problem,"icecube")*/)
+     Particlelines = INIT_PARTICLES(&N,imax,jmax,delx,dely,ppc,problem,U,V,P);
 
   SETBCOND(U,V,P,TEMP,FLAG,imax,jmax,wW,wE,wN,wS);
   SETSPECBCOND(problem,U,V,P,TEMP,imax,jmax,UI,VI);
@@ -87,17 +87,20 @@ int main(int argc, char *Inputfile[])
 
                 /* t i m e    l o o p */
                 /*--------------------*/
-  for(t=0.0,cycle=0; t < t_end; t+=delt,cycle++)
+  t = 0.0;
+  cycle = 0;
+  for(pass = 1; pass <=2; pass++) {
+  for(t,cycle; t < t_end; t+=delt,cycle++)
   {
    COMP_delt(&delt, t, imax, jmax, delx, dely, U, V, Re, Pr, tau, &write,
-             del_trace, del_inj, del_streak, del_vec);    
+             del_trace, del_inj, del_streak, del_vec);   
 
    /* Determine fluid cells for free boundary problems */
    /* and set boundary values at free surface          */
    /*--------------------------------------------------*/
    if (!strcmp(problem,"drop") || !strcmp(problem,"dam") ||
        !strcmp(problem,"molding") || !strcmp(problem,"wave") ||
-	   !strcmp(problem,"icecube"))
+	   (pass==2 && !strcmp(problem,"icecube")))
      {
       MARK_CELLS(FLAG,imax,jmax,delx,dely,&ifull,&isurf,
                  N,Particlelines);
@@ -117,8 +120,6 @@ int main(int argc, char *Inputfile[])
    /* Compute right hand side for pressure equation */
    /*-----------------------------------------------*/
    COMP_RHS(F,G,RHS,FLAG,imax,jmax,delt,delx,dely);
-	for(i=0;i<=imax+1;i++)
-		P[i][jmax+1] = 6.;
 
 
    /* Debug Code */
@@ -131,7 +132,8 @@ int main(int argc, char *Inputfile[])
 		printf("\n");
 	}
 	printf("\n\n");
-	scanf("%d", &a);*/
+	scanf("%d", &a);
+	*/
    /* End Debug */
 
    /* Solve the pressure equation by successive over relaxation */
@@ -156,7 +158,8 @@ int main(int argc, char *Inputfile[])
    SETSPECBCOND(problem,U,V,P,TEMP,imax,jmax,UI,VI);
 
    if (!strcmp(problem,"drop") || !strcmp(problem,"dam") ||
-       !strcmp(problem,"molding") || !strcmp(problem,"wave"))
+       !strcmp(problem,"molding") || !strcmp(problem,"wave") ||
+	   (!strcmp(problem,"icecube") && pass==2))
       SET_UVP_SURFACE(U,V,P,FLAG,GX,GY,imax,jmax,Re,delx,dely,delt);
 
    /* Write data for visualization */
@@ -170,15 +173,24 @@ int main(int argc, char *Inputfile[])
      }
    if ((write & 8) && strcmp(outfile,"none"))
       WRITE_bin(U,V,P,TEMP,FLAG,imax,jmax,outfile);
-   if (strcmp(tracefile,"none"))
+   if ((strcmp(tracefile,"none")!=0) && pass==2)
       PARTICLE_TRACING(tracefile,t,imax,jmax,delx,dely,delt,U,V,FLAG,
                      N,Particlelines,write);
    if (strcmp(streakfile,"none"))
       STREAKLINES(streakfile,write,imax,jmax,delx,dely,delt,t,
                   U,V,FLAG,N,Particlelines);
-  }           
+  }
+	 t_end = 60;
+	 if(pass==1){
+	 for(i=1;i<=imax;i++)
+		 for(j=1;j<=jmax;j++)
+			 FLAG[i][j] = C_F;
+     
+	 Particlelines = INIT_PARTICLES(&N,imax,jmax,delx,dely,ppc,problem,U,V,P);
+	 }
+
   /* e n d   o f   t i m e   l o o p */
-  
+  }  
  if (strcmp(vecfile,"none"))
    {     
     COMPPSIZETA(U,V,PSI,ZETA,FLAG,imax,jmax,delx,dely);
@@ -189,6 +201,16 @@ int main(int argc, char *Inputfile[])
  if (strcmp(outfile,"none"))
     WRITE_bin(U,V,P,TEMP,FLAG,imax,jmax,outfile);
 
+ printf ("\nGeometry of the fluid domain:\n\n");
+   	for(j=jmax+1;j>=0;j--)
+	{
+		for(i=0;i<=imax+1;i++)
+			printf("%d ", (int) P[i][j]);
+		printf("\n");
+	}
+	printf("\n\n");
+	scanf("%d", &a);
+	
  /* free memory */
  /*-------------*/
   FREE_RMATRIX(U,0,imax+1,0,jmax+1);

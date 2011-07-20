@@ -1,6 +1,6 @@
 struct particleline *INIT_PARTICLES(int *N,int imax,int jmax,
                                     REAL delx,REAL dely,
-                                    int ppc,char *problem,REAL **U,REAL **V);
+                                    int ppc,char *problem,REAL **U,REAL **V,REAL **P);
 
 void SET_PART(struct particleline *Partline,REAL x,REAL y);
 

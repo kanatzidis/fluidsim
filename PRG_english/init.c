@@ -224,14 +224,14 @@ void INIT_UVP(char *problem,
 	  				/*icecube experimental setup */
 	  				/*imploded PMT */
 	center = 5.;
-	rad1 = 2.5;
+	rad1 = 5/8;
 			x = i*.2;
 			y = j*.2;
 			if(((x-center)*(x-center)+y*y)<=(rad1*rad1)){
 				P[i][j] = 0.;
 			}
   else 
-	P[i][j] = 6.;
+	P[i][j] = 0.;
   }else{
 	  P[i][j]=0;}
 	TEMP[i][j] = TI;
@@ -338,11 +338,11 @@ void INIT_FLAG(char *problem,int **FLAG,int imax,int jmax,REAL delx,REAL dely,
 	  }
     }
 
-/*  if(strcmp(problem,"icecube")==0)
-  {*/
+  if(strcmp(problem,"icecube")==0)
+  {
 	  				/*icecube experimental setup */
 	  				/*imploded PMT */
-	/*center = imax*delx/2;
+	center = imax*delx/2;
 	rad1 = center/2;
 	for (i=1; i<=imax; i++)
 		for (j=1;j<=jmax;j++)
@@ -350,9 +350,9 @@ void INIT_FLAG(char *problem,int **FLAG,int imax,int jmax,REAL delx,REAL dely,
 			x = (i-0.5)*delx;
 			y = (j-0.5)*dely;
 			if (sqrt((x-center)*(x-center)+y*y)<=rad1)
-				FLAG[i][j] = C_E;
+				FLAG[i][j] = C_B;
 		}
-  }*/
+  }
 
 
 
