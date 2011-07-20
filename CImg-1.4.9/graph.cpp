@@ -24,14 +24,16 @@ int main() {
 	i=0;
 	timeslice=false;
 	Point p,oldp;
-	CImg<unsigned char> visu(500, 500, 1, 3, 0);
+	CImg<unsigned char> blank(100, 100, 1, 3, 0), visu(500, 500, 1, 3, 0);
 	const unsigned char red[] = {255,0,0}, green[] = {0,255,0}, blue[] = {0,0,255};
-	CImgDisplay draw_disp(visu, "Fluid Vis");
+	CImgDisplay main_disp(blank, "click to stop"), draw_disp(visu, "Fluid Vis");
 	visu.fill(0);
 	while(!draw_disp.is_closed()) {
 		if(!timeslice){
+		if(!main_disp.button()) {
 		oldp.X = p.X; oldp.Y = p.Y;
-		if(getnewp(&p)) {
+		bool test=getnewp(&p);
+		if(test) {
 			if(0<=p.X<=500 && 0<=p.Y<=500) {
 			visu(p.X, 500-p.Y, 0, 0)=255;
 			visu(p.X, 500-p.Y, 0, 1)=0;
@@ -41,7 +43,7 @@ int main() {
 			std::cout<<"End of File"<<std::endl;
 			std::string s;
 			std::cin>>s;
-		}
+		}}
 		else {
 			std::cout<<i<<std::endl;
 			return 0;
@@ -51,7 +53,7 @@ int main() {
 		std::cout<<"advance to next timestep? [y/n] ";
 		std::string y;
 		std::cin>>y;
-		if(strcmp(y.c_str(),"y")==0 || strcmp(y.c_str(), "")==0){
+		if(!strcmp(y.c_str(),"y")){
 			visu.fill(0);
 			timeslice=false;
 		}else{
