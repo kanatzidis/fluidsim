@@ -18,7 +18,7 @@ void ADVANCE_AT_BOUND(int i,int j,REAL *x,REAL *y,REAL u,REAL v,
 
 void INJECT_PARTICLES(int N, struct particleline *Partlines);
 
-void WRITE_PARTICLES(char *outputfile,int N,struct particleline *Partlines);
+void WRITE_PARTICLES(char *outputfile,int N,struct particleline *Partlines, REAL t);
 
 void WRITE_PARTICLES_bin(char *partfile,int N,struct particleline *Partlines);
 

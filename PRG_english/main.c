@@ -95,6 +95,7 @@ int main(int argc, char *Inputfile[])
    COMP_delt(&delt, t, imax, jmax, delx, dely, U, V, Re, Pr, tau, &write,
              del_trace, del_inj, del_streak, del_vec);   
 
+
    /* Determine fluid cells for free boundary problems */
    /* and set boundary values at free surface          */
    /*--------------------------------------------------*/

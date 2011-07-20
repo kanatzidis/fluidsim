@@ -404,7 +404,7 @@ void INJECT_PARTICLES(int N, struct particleline *Partlines){
 /*--------------------------------------------------------------*/
 /* Append particle positions to file "partfile" in ascii format */
 /*--------------------------------------------------------------*/
-void WRITE_PARTICLES(char *partfile, int N, struct particleline *Partlines){
+void WRITE_PARTICLES(char *partfile, int N, struct particleline *Partlines, REAL t){
   int i;
   FILE *fp;
   struct particle *part;
@@ -413,8 +413,9 @@ void WRITE_PARTICLES(char *partfile, int N, struct particleline *Partlines){
   for(i=1; i<=N; i++){
 	fprintf(fp,"%s","Partlines[");
 	fprintf(fp,"%d",i);
-	fprintf(fp,"%s","]");
+	fprintf(fp,"%s\n","]");
     fprintf(fp,"%d\n",Partlines[i].length);
+	fprintf(fp,"%s %f\n","t = ", t);
     for(part=Partlines[i].Particles; part->next != NULL; part=part->next)
       fprintf(fp,"%3.3f %3.3f\n", part->next->x, part->next->y);
   }
@@ -461,13 +462,13 @@ void PARTICLE_TRACING(char* outputfile,REAL t,int imax,int jmax,
     fp = fopen(outputfile, "wb");
     fprintf(fp,"%d\n%d\n%f\n%f\n%d\n", imax, jmax, delx, dely, N);
     fclose(fp);
-    WRITE_PARTICLES(outputfile,N,Partlines);
+    WRITE_PARTICLES(outputfile,N,Partlines,t);
   }
 
   ADVANCE_PARTICLES(imax,jmax,delx,dely,delt,U,V,FLAG,N,Partlines);
 
-  if(write & 1)
-    WRITE_PARTICLES(outputfile,N,Partlines);
+//  if(write & 1)
+    WRITE_PARTICLES(outputfile,N,Partlines,t);
     
 }/*End PARTICLE_TRACING*/
 
@@ -494,5 +495,5 @@ void STREAKLINES(char* streakfile,int write,
   ADVANCE_PARTICLES(imax,jmax,delx,dely,delt,U,V,FLAG,N,Partlines);
 
   if(write & 2)  INJECT_PARTICLES(N,Partlines);
-  if(write & 4)  WRITE_PARTICLES(streakfile,N,Partlines);
+  if(write & 4)  WRITE_PARTICLES(streakfile,N,Partlines,delx);
 }/*End STREAKLINES*/
