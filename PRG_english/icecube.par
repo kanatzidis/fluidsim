@@ -12,7 +12,7 @@ none  		outfile: file to write final values
 0.04		delt: time stepsize
 0.5             tau:  safety factor for time stepsize control
 
-1.0		del_trace: time stepsize for writing particle positions for particle tracing
+.1		del_trace: time stepsize for writing particle positions for particle tracing
 1000.0		del_inj:   time stepsize for injecting particles
 0.5		del_streak:time stepsize for writing particle positions of streaklines
 1.0 		del_vec:   time stepsize for writing velocity and pressure values

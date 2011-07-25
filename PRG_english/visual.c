@@ -467,7 +467,7 @@ void PARTICLE_TRACING(char* outputfile,REAL t,int imax,int jmax,
 
   ADVANCE_PARTICLES(imax,jmax,delx,dely,delt,U,V,FLAG,N,Partlines);
 
-//  if(write & 1)
+  if(write & 1)
     WRITE_PARTICLES(outputfile,N,Partlines,t);
     
 }/*End PARTICLE_TRACING*/
