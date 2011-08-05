@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
+#include <stdarg.h>
 #include "datadef.h"
 #include "init.h"
 #include "boundary.h"
@@ -28,7 +30,14 @@ int main(int argc, char *Inputfile[])
   char infile[30],outfile[30];
   struct particleline *Particlelines;
   int init_case, cycle;
-  int a,j,i,pass;
+  int a,j,i,pass,imeas,jmeas;
+  REAL area,oldarea;
+  time_t start = time(NULL);
+  REAL xmeas,ymeas;
+
+  xmeas = 3; //Here you can enter a point to
+  ymeas = 12; //measure the P and V of over time.
+
 
   /* READ the parameters of the problem.                */
   /* Stop if problem type or inputfile are not defined  */       
@@ -43,6 +52,9 @@ int main(int argc, char *Inputfile[])
 		     &itermax,&eps,&omg,&gamma,&p_bound,
 		     &Re,&Pr,&beta,&GX,&GY,&UI,&VI,&TI,
 		     &wW,&wE,&wN,&wS) != 0 ) return(1); 
+
+  imeas = xmeas/delx;
+  jmeas = ymeas/dely;
 
   /* Allocate memory for the arrays */
   /*--------------------------------*/
@@ -165,6 +177,27 @@ int main(int argc, char *Inputfile[])
 
    /* Write data for visualization */
    /*------------------------------*/
+   area=0;
+   for(i=0; i<=imax+1; i++)
+	   for(j=0; j<=jmax+1; j++) {
+		   if(j==jmeas && i==imeas){
+			   WRITEPARAMS(P[i][j], t, "presdata.txt");
+			   WRITEPARAMS(U[i][j], t, "veldata.txt", V[i][j]);
+		   }
+		   if((FLAG[i][j] & C_E) && j<(ylength/delx*.25))
+			   area+=delx*dely;
+	   
+   }
+   
+   if(t==0){
+	   WRITEPARAMS(area, t, "voldata.txt");
+   }
+
+   if(area!=oldarea) {
+	   WRITEPARAMS(area, t, "voldata.txt");
+	   oldarea=area;
+   }
+
    if ((write & 8) && strcmp(vecfile,"none"))
      {     
       COMPPSIZETA(U,V,PSI,ZETA,FLAG,imax,jmax,delx,dely);
@@ -181,7 +214,7 @@ int main(int argc, char *Inputfile[])
       STREAKLINES(streakfile,write,imax,jmax,delx,dely,delt,t,
                   U,V,FLAG,N,Particlelines);
   }
-	 t_end = 60;
+	 t_end = 20;
 	 if(pass==1){
 	 for(i=1;i<=imax;i++)
 		 for(j=1;j<=jmax;j++)
@@ -201,7 +234,7 @@ int main(int argc, char *Inputfile[])
    }
  if (strcmp(outfile,"none"))
     WRITE_bin(U,V,P,TEMP,FLAG,imax,jmax,outfile);
-
+/*
  printf ("\nGeometry of the fluid domain:\n\n");
    	for(j=jmax+1;j>=0;j--)
 	{
@@ -211,7 +244,7 @@ int main(int argc, char *Inputfile[])
 	}
 	printf("\n\n");
 	scanf("%d", &a);
-	
+*/	
  /* free memory */
  /*-------------*/
   FREE_RMATRIX(U,0,imax+1,0,jmax+1);
@@ -225,6 +258,9 @@ int main(int argc, char *Inputfile[])
   FREE_RMATRIX(HEAT,0,imax,0,jmax);
   FREE_RMATRIX(RHS,0,imax+1,0,jmax+1);
   FREE_IMATRIX(FLAG,0,imax+1,0,jmax+1);
- 
+
+  printf("Program completed in ");
+  printf("%f", difftime(time(NULL), start));
+  printf(" seconds\n"); 
   printf("End of program\n"); return(0);
 }

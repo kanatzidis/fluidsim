@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include "datadef.h"
 #include "visual.h"
 
@@ -497,3 +498,26 @@ void STREAKLINES(char* streakfile,int write,
   if(write & 2)  INJECT_PARTICLES(N,Partlines);
   if(write & 4)  WRITE_PARTICLES(streakfile,N,Partlines,delx);
 }/*End STREAKLINES*/
+
+void WRITEPARAMS(REAL param, REAL t, char* file,...) {
+	FILE *fp;
+	int i;
+
+	va_list pointer;
+	va_start(pointer, file);
+	fp = fopen(file, "a");
+	if(t==0) {
+		if(!strcmp(file, "veldata.txt")){
+			fprintf(fp, "%s %s %s\n", "time", "x vel", "y vel");
+		}else{
+			fprintf(fp, "%s %s\n", "time", "param");
+		}
+	}
+	if(!strcmp(file,"veldata.txt")){
+		fprintf(fp, "%f %f %f\n", t, param, va_arg(pointer, REAL));
+	}else{
+	fprintf(fp, "%f %f\n", t, param);
+	}
+	fclose(fp);
+	va_end(pointer);
+}

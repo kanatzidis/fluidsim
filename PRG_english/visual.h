@@ -36,3 +36,5 @@ struct particle *PARTALLOC(REAL x, REAL y);
 
 struct particleline *SET_PARTICLES(int N,REAL pos1x,REAL pos1y,
 					 REAL pos2x,REAL pos2y);
+
+void WRITEPARAMS(REAL param, REAL t, char* file,...);

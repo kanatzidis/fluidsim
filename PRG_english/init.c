@@ -219,25 +219,11 @@ void INIT_UVP(char *problem,
       {
 	U[i][j] = UI;
 	V[i][j] = VI;
-  if(strcmp(problem,"icecube")==0)
-  {
-	  				/*icecube experimental setup */
-	  				/*imploded PMT */
-	center = 5.;
-	rad1 = 5/8;
-			x = i*.2;
-			y = j*.2;
-			if(((x-center)*(x-center)+y*y)<=(rad1*rad1)){
-				P[i][j] = 0.;
-			}
-  else 
 	P[i][j] = 0.;
-  }else{
-	  P[i][j]=0;}
 	TEMP[i][j] = TI;
       }
 
-	printf("\nGeometryetc:\n\n");
+/*	printf("\nGeometryetc:\n\n");
 	for(j=jmax+1;j>=0;j--)
 	{
 		for(i=0;i<=imax+1;i++)
@@ -246,7 +232,7 @@ void INIT_UVP(char *problem,
 	}
 	printf("\n\n");
 	scanf("%d", &a);
-
+*/
 
   /* Set U=0.0 in the lower half for the flow past a backward facing step */
   /*----------------------------------------------------------------------*/
@@ -373,10 +359,9 @@ void INIT_FLAG(char *problem,int **FLAG,int imax,int jmax,REAL delx,REAL dely,
               FLAG[i][j] = C_B;
 	  }
     }
-
                      /* Printing the geometry of the fluid domain */
                      /*-------------------------------------------*/
-  printf ("\nGeometry of the fluid domain:\n\n");
+/*  printf ("\nGeometry of the fluid domain:\n\n");
   for(j=jmax+1;j>=0;j--)
     {
      for(i=0;i<=imax+1;i++)
@@ -387,7 +372,7 @@ void INIT_FLAG(char *problem,int **FLAG,int imax,int jmax,REAL delx,REAL dely,
      printf ("\n");
     }
   printf ("\n");
-  printf ("\n");
+  printf ("\n");*/
                     /* FLAGs for boundary cells */
                     /*--------------------------*/
   (*ibound) = 0;
